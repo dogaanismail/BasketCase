@@ -64,7 +64,12 @@ namespace BasketCase.Framework.Infrastructure.Extensions
         /// <param name="services"></param>
         public static void AddSystemMvc(this IServiceCollection services)
         {
-            services.AddCors();
+            services.AddCors(o => o.AddPolicy("basketcase-policy", b =>
+            {
+                b.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
 
             services.AddMvc(opt =>
             {
@@ -99,7 +104,7 @@ namespace BasketCase.Framework.Infrastructure.Extensions
                         {
                             Reference = new OpenApiReference
                             {
-                                Id = "Bearer", 
+                                Id = "Bearer",
                                 Type = ReferenceType.SecurityScheme
                             }
                         },
