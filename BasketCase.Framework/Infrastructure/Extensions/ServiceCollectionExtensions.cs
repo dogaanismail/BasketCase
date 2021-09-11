@@ -31,7 +31,7 @@ namespace BasketCase.Framework.Infrastructure.Extensions
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "devPlatform Api", Version = "1.0.0" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "BasketCase Api", Version = "1.0.0" });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -95,10 +95,10 @@ namespace BasketCase.Framework.Infrastructure.Extensions
         }
 
         /// <summary>
-        /// Adds DevPlatform behavior options
+        /// Adds behavior options
         /// </summary>
         /// <param name="services"></param>
-        public static void AddDevPlatformBehaviorOptions(this IServiceCollection services)
+        public static void AddBehaviorOptions(this IServiceCollection services)
         {
             services.Configure<ApiBehaviorOptions>(opt =>
             {

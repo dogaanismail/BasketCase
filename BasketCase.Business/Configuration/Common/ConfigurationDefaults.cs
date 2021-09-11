@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents default values related to configuration services
     /// </summary>
-    public static partial class DevPlatformConfigurationDefaults
+    public static partial class SystemConfigurationDefaults
     {
         /// <summary>
         /// Gets the path to file that contains app settings

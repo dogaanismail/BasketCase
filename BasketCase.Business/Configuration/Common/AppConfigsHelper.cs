@@ -18,11 +18,11 @@ namespace BasketCase.Business.Configuration.Common
         /// </summary>
         /// <param name="appconfig"></param>
         /// <param name="fileProvider"></param>
-        public static void SaveAppSettings(AppConfig appconfig, IDevPlatformFileProvider fileProvider = null)
+        public static void SaveAppSettings(AppConfig appconfig, ISystemFileProvider fileProvider = null)
         {
             Singleton<AppConfig>.Instance = appconfig ?? throw new ArgumentNullException(nameof(appconfig));
 
-            var filePath = fileProvider.MapPath(DevPlatformConfigurationDefaults.AppConfigsFilePath);
+            var filePath = fileProvider.MapPath(SystemConfigurationDefaults.AppConfigsFilePath);
             fileProvider.CreateFile(filePath);
 
             var text = JsonConvert.SerializeObject(appconfig, Formatting.Indented);

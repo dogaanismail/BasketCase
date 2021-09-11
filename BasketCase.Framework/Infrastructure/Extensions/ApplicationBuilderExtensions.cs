@@ -12,7 +12,7 @@ namespace BasketCase.Framework.Infrastructure.Extensions
         /// Configure swagger
         /// </summary>
         /// <param name="application"></param>
-        public static void UseDevPlatformSwagger(this IApplicationBuilder application)
+        public static void UseSwagger(this IApplicationBuilder application)
         {
             application.UseSwagger();
             application.UseSwaggerUI(c =>
