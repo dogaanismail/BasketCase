@@ -1,11 +1,17 @@
-﻿using BasketCase.Core.Configuration;
+﻿using BasketCase.Business.Configuration.Common;
+using BasketCase.Core.Attributes;
+using BasketCase.Core.Configuration;
 using BasketCase.Core.Infrastructure;
 using BasketCase.Domain.Enumerations;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
+using System.Net;
 
 namespace BasketCase.Framework.Infrastructure.Extensions
 {
@@ -15,12 +21,57 @@ namespace BasketCase.Framework.Infrastructure.Extensions
     public static class ServiceCollectionExtensions
     {
         /// <summary>
+        /// Add services to the application and configure service provider
+        /// </summary>
+        /// <param name="services">Collection of service descriptors</param>
+        /// <param name="configuration">Configuration of the application</param>
+        /// <param name="webHostEnvironment">Hosting environment</param>
+        /// <returns>Configured service provider</returns>
+        public static (IEngine, AppConfig) ConfigureApplicationServices(this IServiceCollection services,
+            IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
+        {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
+
+            CommonHelper.DefaultFileProvider = new SystemFileProvider(webHostEnvironment);
+
+            services.AddHttpContextAccessor();
+
+            var appConfigs = new AppConfig();
+            configuration.Bind(appConfigs);
+            services.AddSingleton(appConfigs);
+            AppConfigsHelper.SaveAppSettings(appConfigs);
+
+            var engine = EngineContext.Create();
+
+            engine.ConfigureServices(services, configuration);
+            engine.RegisterDependencies(services, appConfigs);
+
+            return (engine, appConfigs);
+        }
+
+        /// <summary>
         /// Register httpContextAccessor
         /// </summary>
         /// <param name="services"></param>
         public static void AddHttpContextAccessor(this IServiceCollection services)
         {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        }
+
+        /// <summary>
+        /// Register mvc configurations
+        /// </summary>
+        /// <param name="services"></param>
+        public static void AddSystemMvc(this IServiceCollection services)
+        {
+            services.AddCors();
+
+            services.AddMvc(opt =>
+            {
+                opt.EnableEndpointRouting = false;
+                opt.Filters.Add(typeof(ValidateModelAttribute));
+            }).SetCompatibilityVersion(CompatibilityVersion.Latest)
+            .AddFluentValidation(fvc => { });
         }
 
         /// <summary>

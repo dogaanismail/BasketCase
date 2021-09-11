@@ -5,14 +5,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="10.3.3" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="10.3.3" />
     <PackageReference Include="Microsoft.Extensions.Caching.SqlServer" Version="5.0.1" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="5.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BasketCase.Business\BasketCase.Business.csproj" />
     <ProjectReference Include="..\BasketCase.Core\BasketCase.Core.csproj" />
     <ProjectReference Include="..\BasketCase.Domain\BasketCase.Domain.csproj" />
+    <ProjectReference Include="..\BasketCase.Repository\BasketCase.Repository.csproj" />
   </ItemGroup>
 
 </Project>

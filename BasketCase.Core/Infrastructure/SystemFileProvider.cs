@@ -74,7 +74,6 @@ namespace BasketCase.Core.Infrastructure
             var path = Path.Combine(paths.SelectMany(p => IsUncPath(p) ? new[] { p } : p.Split('\\', '/')).ToArray());
 
             if (Environment.OSVersion.Platform == PlatformID.Unix && !IsUncPath(path))
-                //add leading slash to correctly form path in the UNIX system
                 path = "/" + path;
 
             return path;
@@ -102,7 +101,6 @@ namespace BasketCase.Core.Infrastructure
             var fileInfo = new FileInfo(path);
             CreateDirectory(fileInfo.DirectoryName);
 
-            //we use 'using' to close the file after it's created
             using (File.Create(path))
             {
             }
@@ -116,9 +114,6 @@ namespace BasketCase.Core.Infrastructure
         {
             if (string.IsNullOrEmpty(path))
                 throw new ArgumentNullException(path);
-
-            //find more info about directory deletion
-            //and why we use this approach at https://stackoverflow.com/questions/329355/cannot-delete-directory-with-directory-deletepath-true
 
             foreach (var directory in Directory.GetDirectories(path))
             {
