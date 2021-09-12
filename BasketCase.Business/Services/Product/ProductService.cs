@@ -70,7 +70,7 @@ namespace BasketCase.Business.Services.Product
             try
             {
 
-                Core.Domain.Product.Product entity = new()
+                Core.Domain.Product.Product product = new()
                 {
                     Name = request.Name,
                     ShortDescription = request.ShortDescription,
@@ -78,7 +78,7 @@ namespace BasketCase.Business.Services.Product
                     Title = request.Title
                 };
 
-                await CreateAsync(entity);
+                await CreateAsync(product);
 
                 return serviceResponse;
             }
