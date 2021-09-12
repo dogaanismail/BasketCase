@@ -2,7 +2,10 @@
 using BasketCase.Core.Attributes;
 using BasketCase.Core.Configuration;
 using BasketCase.Core.Infrastructure;
+using BasketCase.Domain.Dto.Request.Product;
 using BasketCase.Domain.Enumerations;
+using BasketCase.Domain.Validation.Product;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -121,7 +124,7 @@ namespace BasketCase.Framework.Infrastructure.Extensions
         }
 
         /// <summary>
-        /// Adds services required for distributed cache
+        /// Register services required for distributed cache
         /// </summary>
         /// <param name="services">Collection of service descriptors</param>
         public static void AddSystemDistributedCache(this IServiceCollection services)
@@ -157,7 +160,7 @@ namespace BasketCase.Framework.Infrastructure.Extensions
         }
 
         /// <summary>
-        /// Adds behavior options
+        /// Register behavior options
         /// </summary>
         /// <param name="services"></param>
         public static void AddBehaviorOptions(this IServiceCollection services)
@@ -166,6 +169,15 @@ namespace BasketCase.Framework.Infrastructure.Extensions
             {
                 opt.SuppressModelStateInvalidFilter = true;
             });
+        }
+
+        /// <summary>
+        /// Register the validators
+        /// </summary>
+        /// <param name="services"></param>
+        public static void AddSystemValidator(this IServiceCollection services)
+        {
+            services.AddSingleton<IValidator<ProductCreateRequest>, ProductCreateValidator>();
         }
     }
 }

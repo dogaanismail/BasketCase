@@ -27,6 +27,8 @@ namespace BasketCase.Framework.Infrastructure
             services.AddBehaviorOptions();
 
             services.AddSystemDistributedCache();
+
+            services.AddSystemValidator();
         }
 
         /// <summary>
