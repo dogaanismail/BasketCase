@@ -1,4 +1,8 @@
-﻿namespace BasketCase.Core.Configuration
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
+
+namespace BasketCase.Core.Configuration
 {
     /// <summary>
     /// Represents the app configs
@@ -21,6 +25,12 @@
         /// Gets or sets distributed cache configuration parameters
         /// </summary>
         public MongoDbConfig MongoDbConfig { get; set; } = new MongoDbConfig();
+
+        /// <summary>
+        /// Gets or sets additional configuration parameters
+        /// </summary>
+        [JsonExtensionData]
+        public IDictionary<string, JToken> AdditionalData { get; set; }
 
         #endregion
     }

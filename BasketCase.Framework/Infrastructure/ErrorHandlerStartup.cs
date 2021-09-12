@@ -1,4 +1,5 @@
 ﻿using BasketCase.Core.Infrastructure;
+using BasketCase.Framework.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +26,7 @@ namespace BasketCase.Framework.Infrastructure
         /// <param name="application"></param>
         public void Configure(IApplicationBuilder application)
         {
-            application.UseExceptionHandler();
+            application.UseSystemExceptionHandler();
         }
 
         /// <summary>

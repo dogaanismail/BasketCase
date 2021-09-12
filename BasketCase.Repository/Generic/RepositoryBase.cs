@@ -9,7 +9,11 @@ using System.Threading.Tasks;
 
 namespace BasketCase.Repository.Generic
 {
-    public class RepositoryBase<T> : IRepository<T, string> where T : BaseEntity
+    /// <summary>
+    /// Generic repository base implementations
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class RepositoryBase<T> : IRepository<T> where T : BaseEntity
     {
         #region Fields
         protected readonly IMongoCollection<T> Collection;
@@ -19,7 +23,7 @@ namespace BasketCase.Repository.Generic
 
         #region Ctor
 
-        protected RepositoryBase(AppConfig appConfigs)
+        public RepositoryBase(AppConfig appConfigs)
         {
             _appConfig = appConfigs;
             var client = new MongoClient(_appConfig.MongoDbConfig.ConnectionString);

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Net.Http.Headers;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Net;
 
@@ -27,7 +28,7 @@ namespace BasketCase.Framework.Infrastructure.Extensions
         /// Configure swagger
         /// </summary>
         /// <param name="application"></param>
-        public static void UseSwagger(this IApplicationBuilder application)
+        public static void UseSystemSwagger(this IApplicationBuilder application)
         {
             application.UseSwagger();
             application.UseSwaggerUI(c =>
@@ -93,6 +94,27 @@ namespace BasketCase.Framework.Infrastructure.Extensions
                         await context.Response.WriteAsync(exception.Message);
                     }
                 });
+            });
+        }
+
+        /// <summary>
+        /// Configure static file serving
+        /// </summary>
+        /// <param name="application">Builder for configuring an application's request pipeline</param>
+        public static void UseSystemStaticFiles(this IApplicationBuilder application)
+        {
+            application.UseHttpsRedirection().UseResponseCompression();
+        }
+
+        /// <summary>
+        /// Configure systerm end point
+        /// </summary>
+        /// <param name="application">Builder for configuring an application's request pipeline</param>
+        public static void UseSystemEndPoint(this IApplicationBuilder application)
+        {
+            application.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
             });
         }
     }

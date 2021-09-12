@@ -1,4 +1,6 @@
-﻿using BasketCase.Core.Caching;
+﻿using BasketCase.Business.Interfaces.Product;
+using BasketCase.Business.Services.Product;
+using BasketCase.Core.Caching;
 using BasketCase.Core.Configuration;
 using BasketCase.Core.Infrastructure;
 using BasketCase.Core.Infrastructure.DependencyManagement;
@@ -20,7 +22,9 @@ namespace BasketCase.Framework.Infrastructure
         {
             services.AddScoped<ISystemFileProvider, SystemFileProvider>();
 
-            services.AddScoped(typeof(IRepository<,>), typeof(RepositoryBase<>));
+            services.AddScoped(typeof(IRepository<>), typeof(RepositoryBase<>));
+
+            services.AddScoped<IProductService, ProductService>();
 
             #region Caching implementations
             if (appConfig.DistributedCacheConfig.Enabled)

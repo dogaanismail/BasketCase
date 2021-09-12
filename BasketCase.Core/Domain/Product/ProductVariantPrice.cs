@@ -10,8 +10,6 @@ namespace BasketCase.Core.Domain.Product
 
         public decimal NewPrice { get; set; }
 
-        public decimal TaxRate { get; set; }
-
         public decimal SpecialPrice { get; set; }
     }
 }

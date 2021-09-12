@@ -4,13 +4,16 @@ using BasketCase.Core.Configuration;
 using BasketCase.Core.Infrastructure;
 using BasketCase.Domain.Enumerations;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 
 namespace BasketCase.Framework.Infrastructure.Extensions
@@ -64,12 +67,15 @@ namespace BasketCase.Framework.Infrastructure.Extensions
         /// <param name="services"></param>
         public static void AddSystemMvc(this IServiceCollection services)
         {
-            services.AddCors(o => o.AddPolicy("basketcase-policy", b =>
-            {
-                b.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-            }));
+            services.AddResponseCompression(
+             options => options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[]
+                             {
+                                    "image/jpeg",
+                                    "image/png",
+                                    "image/gif"
+                             }));
+
+            services.AddCors();
 
             services.AddMvc(opt =>
             {
@@ -83,11 +89,11 @@ namespace BasketCase.Framework.Infrastructure.Extensions
         /// Register swagger implementation
         /// </summary>
         /// <param name="services"></param>
-        public static void AddSwagger(this IServiceCollection services)
+        public static void AddSystemSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "BasketCase Api", Version = "1.0.0" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "BasketCase.Api", Version = "1.0.0" });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -118,7 +124,7 @@ namespace BasketCase.Framework.Infrastructure.Extensions
         /// Adds services required for distributed cache
         /// </summary>
         /// <param name="services">Collection of service descriptors</param>
-        public static void AddDistributedCache(this IServiceCollection services)
+        public static void AddSystemDistributedCache(this IServiceCollection services)
         {
             var appSettings = Singleton<AppConfig>.Instance;
             var distributedCacheConfig = appSettings.DistributedCacheConfig;
@@ -129,7 +135,7 @@ namespace BasketCase.Framework.Infrastructure.Extensions
             switch (distributedCacheConfig.DistributedCacheType)
             {
                 case DistributedCacheType.Memory:
-                    services.AddDistributedCache();
+                    services.AddDistributedMemoryCache();
                     break;
 
                 case DistributedCacheType.SqlServer:

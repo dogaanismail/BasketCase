@@ -18,5 +18,10 @@ namespace BasketCase.Core.Entities
         [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
         [BsonElement(Order = 101)]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        [BsonRepresentation(BsonType.DateTime)]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+        [BsonElement(Order = 101)]
+        public DateTime UpdatedAt { get; set; }
     }
 }

@@ -22,11 +22,11 @@ namespace BasketCase.Framework.Infrastructure
 
             services.AddOptions();
 
-            services.AddSwagger();
+            services.AddSystemSwagger();
 
             services.AddBehaviorOptions();
 
-            services.AddDistributedCache();
+            services.AddSystemDistributedCache();
         }
 
         /// <summary>
@@ -39,7 +39,11 @@ namespace BasketCase.Framework.Infrastructure
 
             application.UseSystemRouting();
 
-            application.UseSwagger();
+            application.UseSystemSwagger();
+
+            application.UseSystemStaticFiles();
+
+            application.UseSystemEndPoint();
         }
 
         /// <summary>

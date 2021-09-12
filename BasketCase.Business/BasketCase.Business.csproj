@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BasketCase.Core\BasketCase.Core.csproj" />
+    <ProjectReference Include="..\BasketCase.Repository\BasketCase.Repository.csproj" />
   </ItemGroup>
 
 </Project>

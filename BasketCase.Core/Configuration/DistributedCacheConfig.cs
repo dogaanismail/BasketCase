@@ -13,7 +13,7 @@ namespace BasketCase.Core.Configuration
         /// Gets or sets a distributed cache type
         /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
-        public DistributedCacheType DistributedCacheType { get; set; } = DistributedCacheType.Redis;
+        public DistributedCacheType DistributedCacheType { get; set; } = DistributedCacheType.Memory;
 
         /// <summary>
         /// Gets or sets a value indicating whether we should use distributed cache

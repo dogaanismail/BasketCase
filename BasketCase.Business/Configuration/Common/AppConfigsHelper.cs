@@ -22,8 +22,13 @@ namespace BasketCase.Business.Configuration.Common
         {
             Singleton<AppConfig>.Instance = appconfig ?? throw new ArgumentNullException(nameof(appconfig));
 
+            fileProvider ??= CommonHelper.DefaultFileProvider;
+
             var filePath = fileProvider.MapPath(SystemConfigurationDefaults.AppConfigsFilePath);
             fileProvider.CreateFile(filePath);
+
+            var additionalData = JsonConvert.DeserializeObject<AppConfig>(fileProvider.ReadAllText(filePath, Encoding.UTF8))?.AdditionalData;
+            appconfig.AdditionalData = additionalData;
 
             var text = JsonConvert.SerializeObject(appconfig, Formatting.Indented);
             fileProvider.WriteAllText(filePath, text, Encoding.UTF8);
