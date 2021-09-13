@@ -1,5 +1,8 @@
-﻿using BasketCase.Business.Interfaces.Product;
+﻿using BasketCase.Business.Interfaces.Logging;
+using BasketCase.Business.Interfaces.Product;
+using BasketCase.Business.Services.Logging;
 using BasketCase.Business.Services.Product;
+using BasketCase.Core;
 using BasketCase.Core.Caching;
 using BasketCase.Core.Configuration;
 using BasketCase.Core.Infrastructure;
@@ -24,7 +27,10 @@ namespace BasketCase.Framework.Infrastructure
 
             services.AddScoped(typeof(IRepository<>), typeof(RepositoryBase<>));
 
+            services.AddScoped<IWebHelper, WebHelper>();
+
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<ILogService, LogService>();
 
             #region Caching implementations
             if (appConfig.DistributedCacheConfig.Enabled)

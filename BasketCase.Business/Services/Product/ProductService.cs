@@ -5,6 +5,7 @@ using BasketCase.Repository.Generic;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ProductEntity = BasketCase.Core.Domain.Product.Product;
 
 namespace BasketCase.Business.Services.Product
 {
@@ -32,7 +33,7 @@ namespace BasketCase.Business.Services.Product
         /// </summary>
         /// <param name="product"></param>
         /// <returns></returns>
-        public virtual async Task CreateAsync(Core.Domain.Product.Product product)
+        public virtual async Task CreateAsync(ProductEntity product)
         {
             if (product == null)
                 throw new ArgumentNullException(nameof(product));
@@ -44,7 +45,7 @@ namespace BasketCase.Business.Services.Product
         /// Inserts products by using bulk
         /// </summary>
         /// <param name="post"></param>
-        public virtual async Task CreateAsync(List<Core.Domain.Product.Product> products)
+        public virtual async Task CreateAsync(List<ProductEntity> products)
         {
             if (products == null)
                 throw new ArgumentNullException(nameof(products));
@@ -70,7 +71,7 @@ namespace BasketCase.Business.Services.Product
             try
             {
 
-                Core.Domain.Product.Product product = new()
+                ProductEntity product = new()
                 {
                     Name = request.Name,
                     ShortDescription = request.ShortDescription,
@@ -96,7 +97,7 @@ namespace BasketCase.Business.Services.Product
         /// </summary>
         /// <param name="productId"></param>
         /// <returns></returns>
-        public virtual async Task<Core.Domain.Product.Product> GetByIdAsync(string productId)
+        public virtual async Task<ProductEntity> GetByIdAsync(string productId)
         {
             if (string.IsNullOrEmpty(productId))
                 throw new ArgumentNullException(nameof(productId));

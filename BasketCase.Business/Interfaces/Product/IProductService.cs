@@ -2,6 +2,7 @@
 using BasketCase.Domain.Dto.Request.Product;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ProductEntity = BasketCase.Core.Domain.Product.Product;
 
 namespace BasketCase.Business.Interfaces.Product
 {
@@ -14,13 +15,13 @@ namespace BasketCase.Business.Interfaces.Product
         /// Inserts a product
         /// </summary>
         /// <param name="post"></param>
-        Task CreateAsync(Core.Domain.Product.Product product);
+        Task CreateAsync(ProductEntity product);
 
         /// <summary>
         /// Inserts products by using bulk
         /// </summary>
         /// <param name="post"></param>
-        Task CreateAsync(List<Core.Domain.Product.Product> products);
+        Task CreateAsync(List<ProductEntity> products);
 
         /// <summary>
         /// Inserts a product
@@ -33,6 +34,6 @@ namespace BasketCase.Business.Interfaces.Product
         /// </summary>
         /// <param name="productId"></param>
         /// <returns></returns>
-        Task<Core.Domain.Product.Product> GetByIdAsync(string productId);
+        Task<ProductEntity> GetByIdAsync(string productId);
     }
 }

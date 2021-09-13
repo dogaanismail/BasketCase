@@ -1,4 +1,5 @@
-﻿using BasketCase.Core.Infrastructure;
+﻿using BasketCase.Business.Interfaces.Logging;
+using BasketCase.Core.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -83,8 +84,7 @@ namespace BasketCase.Framework.Infrastructure.Extensions
 
                     try
                     {
-                        //if (await DataSettingsManager.IsDatabaseInstalledAsync())
-                        //    await EngineContext.Current.Resolve<ILogService>().ErrorAsync(exception.Message, exception);
+                        await EngineContext.Current.Resolve<ILogService>().ErrorAsync(exception.Message, exception);
                     }
                     finally
                     {
