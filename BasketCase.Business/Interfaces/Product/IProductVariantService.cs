@@ -1,5 +1,6 @@
 ﻿using BasketCase.Core.Domain.Product;
 using BasketCase.Domain.Common;
+using BasketCase.Domain.Dto.Request.Product;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -13,14 +14,14 @@ namespace BasketCase.Business.Interfaces.Product
         /// <summary>
         /// Inserts a product variant
         /// </summary>
-        /// <param name="product"></param>
-        Task<ResultModel> CreateAsync(ProductVariant productVariant);
+        /// <param name="productVariant"></param>
+        Task CreateAsync(ProductVariant productVariant);
 
         /// <summary>
         /// Inserts product variants by using bulk
         /// </summary>
-        /// <param name="post"></param>
-        Task<ResultModel> CreateAsync(List<ProductVariant> productVariants);
+        /// <param name="productVariants"></param>
+        Task CreateAsync(List<ProductVariant> productVariants);
 
         /// <summary>
         /// Gets a product variant by id
@@ -35,5 +36,11 @@ namespace BasketCase.Business.Interfaces.Product
         /// <param name="variantId"></param>
         /// <returns></returns>
         Task<ProductVariant> GetByProductIdAsync(string productId);
+
+        /// <summary>
+        /// Inserts a product variant
+        /// </summary>
+        /// <param name="request"></param>
+        Task<ServiceResponse<object>> CreateAsync(ProductVariantCreateRequest request);
     }
 }

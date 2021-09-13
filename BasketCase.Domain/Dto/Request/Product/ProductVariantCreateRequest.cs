@@ -1,8 +1,6 @@
-﻿using BasketCase.Core.Entities;
-
-namespace BasketCase.Core.Domain.Product
+﻿namespace BasketCase.Domain.Dto.Request.Product
 {
-    public class ProductVariant : BaseEntity
+    public class ProductVariantCreateRequest
     {
         public string ProductId { get; set; }
 

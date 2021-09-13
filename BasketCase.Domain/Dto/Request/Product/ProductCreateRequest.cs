@@ -11,5 +11,9 @@
         public string AlternativeName { get; set; }
 
         public string Title { get; set; }
+
+        public decimal OldPrice { get; set; }
+
+        public decimal NewPrice { get; set; }
     }
 }

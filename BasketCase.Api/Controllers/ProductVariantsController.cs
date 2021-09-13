@@ -14,37 +14,36 @@ using System.Threading.Tasks;
 namespace BasketCase.Api.Controllers
 {
     [ApiController]
-    public class ProductsController : BaseApiController
+    public class ProductVariantsController : BaseApiController
     {
         #region Fields
-        private readonly IProductService _productService;
+        private readonly IProductVariantService _productVariantService;
         private readonly ILogService _logService;
 
         #endregion
 
         #region Ctor
-
-        public ProductsController(IProductService productService,
+        public ProductVariantsController(IProductVariantService productVariantService,
             ILogService logService)
         {
-            _productService = productService;
+            _productVariantService = productVariantService;
             _logService = logService;
         }
         #endregion
 
         #region Methods
 
-        [HttpPost("create-product")]
+        [HttpPost("create-variant")]
         [AllowAnonymous]
-        public virtual async Task<IActionResult> CreateAsync([FromBody] ProductCreateRequest request)
+        public virtual async Task<IActionResult> CreateAsync([FromBody] ProductVariantCreateRequest request)
         {
-            _ = _logService.InsertLogAsync(LogLevel.Information, $"ProductsController - CreateAsyncRequest", JsonConvert.SerializeObject(request));
+            _ = _logService.InsertLogAsync(LogLevel.Information, $"ProductVariantsController - CreateAsyncRequest", JsonConvert.SerializeObject(request));
 
-            var serviceResponse = await _productService.CreateAsync(request);
+            var serviceResponse = await _productVariantService.CreateAsync(request);
 
             if (serviceResponse.Warnings.Count > 0 || serviceResponse.Warnings.Any())
             {
-                _ = _logService.InsertLogAsync(LogLevel.Error, $"ProductsController - CreateAsync Error", JsonConvert.SerializeObject(serviceResponse));
+                _ = _logService.InsertLogAsync(LogLevel.Error, $"ProductVariantsController - CreateAsync Error", JsonConvert.SerializeObject(serviceResponse));
 
                 return BadResponse(new ResultModel
                 {
@@ -63,7 +62,16 @@ namespace BasketCase.Api.Controllers
         [AllowAnonymous]
         public virtual async Task<IActionResult> GetByIdAsync(string id)
         {
-            var data = await _productService.GetByIdAsync(id);
+            var data = await _productVariantService.GetByIdAsync(id);
+
+            return OkResponse(data);
+        }
+
+        [HttpGet("productId/{productId}")]
+        [AllowAnonymous]
+        public virtual async Task<IActionResult> GetByProductIdAsync(string productId)
+        {
+            var data = await _productVariantService.GetByProductIdAsync(productId);
 
             return OkResponse(data);
         }

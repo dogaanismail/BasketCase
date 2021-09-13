@@ -1,4 +1,6 @@
 ﻿using BasketCase.Business.Interfaces.Product;
+using BasketCase.Core.Caching;
+using BasketCase.Core.Events;
 using BasketCase.Domain.Common;
 using BasketCase.Domain.Dto.Request.Product;
 using BasketCase.Repository.Generic;
@@ -15,14 +17,20 @@ namespace BasketCase.Business.Services.Product
     public class ProductService : IProductService
     {
         #region Fields
-        private readonly IRepository<Core.Domain.Product.Product> _productRepository;
+        private readonly IRepository<ProductEntity> _productRepository;
+        private readonly IEventPublisher _eventPublisher;
+        private readonly IStaticCacheManager _staticCacheManager;
 
         #endregion
 
         #region Ctor
-        public ProductService(IRepository<Core.Domain.Product.Product> productRepository)
+        public ProductService(IRepository<ProductEntity> productRepository,
+            IEventPublisher eventPublisher,
+            IStaticCacheManager staticCacheManager)
         {
             _productRepository = productRepository;
+            _eventPublisher = eventPublisher;
+            _staticCacheManager = staticCacheManager;
         }
         #endregion
 
@@ -39,6 +47,8 @@ namespace BasketCase.Business.Services.Product
                 throw new ArgumentNullException(nameof(product));
 
             await _productRepository.AddAsync(product);
+
+            await _eventPublisher.EntityInsertedAsync(product);
         }
 
         /// <summary>
@@ -51,6 +61,9 @@ namespace BasketCase.Business.Services.Product
                 throw new ArgumentNullException(nameof(products));
 
             await _productRepository.AddRangeAsync(products);
+
+            foreach (var entity in products)
+                await _eventPublisher.EntityInsertedAsync(entity);
         }
 
         /// <summary>
@@ -102,7 +115,12 @@ namespace BasketCase.Business.Services.Product
             if (string.IsNullOrEmpty(productId))
                 throw new ArgumentNullException(nameof(productId));
 
-            return await _productRepository.GetByIdAsync(productId);
+            var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(EntityCacheDefaults<ProductEntity>.ByIdCacheKey, productId);
+
+            return await _staticCacheManager.GetAsync(cacheKey, async () =>
+            {
+                return await _productRepository.GetByIdAsync(productId);
+            });
         }
 
         #endregion

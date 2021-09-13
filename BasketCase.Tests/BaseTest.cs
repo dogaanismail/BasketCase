@@ -76,6 +76,7 @@ namespace BasketCase.Tests
             services.AddTransient(typeof(IRepository<>), typeof(RepositoryBase<>));
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<ILogService, LogService>();
+            services.AddTransient<IProductVariantService, ProductVariantService>();
 
             services.AddTransient<IWebHelper, WebHelper>();
 
