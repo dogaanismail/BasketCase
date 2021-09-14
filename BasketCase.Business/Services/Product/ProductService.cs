@@ -1,9 +1,12 @@
-﻿using BasketCase.Business.Interfaces.Product;
+﻿using BasketCase.Business.Interfaces.Logging;
+using BasketCase.Business.Interfaces.Product;
 using BasketCase.Core.Caching;
 using BasketCase.Core.Events;
 using BasketCase.Domain.Common;
 using BasketCase.Domain.Dto.Request.Product;
+using BasketCase.Domain.Enumerations;
 using BasketCase.Repository.Generic;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,17 +24,20 @@ namespace BasketCase.Business.Services.Product
         private readonly IRepository<ProductEntity> _productRepository;
         private readonly IEventPublisher _eventPublisher;
         private readonly IStaticCacheManager _staticCacheManager;
+        private readonly ILogService _logService;
 
         #endregion
 
         #region Ctor
         public ProductService(IRepository<ProductEntity> productRepository,
             IEventPublisher eventPublisher,
-            IStaticCacheManager staticCacheManager)
+            IStaticCacheManager staticCacheManager,
+            ILogService logService)
         {
             _productRepository = productRepository;
             _eventPublisher = eventPublisher;
             _staticCacheManager = staticCacheManager;
+            _logService = logService;
         }
         #endregion
 
@@ -84,7 +90,6 @@ namespace BasketCase.Business.Services.Product
 
             try
             {
-
                 ProductEntity product = new()
                 {
                     Name = request.Name,
@@ -99,6 +104,7 @@ namespace BasketCase.Business.Services.Product
             }
             catch (Exception ex)
             {
+                _ = _logService.InsertLogAsync(LogLevel.Error, $"ProductService-CreateAsync Error: model {JsonConvert.SerializeObject(request)}", ex.Message.ToString());
                 serviceResponse.Success = false;
                 serviceResponse.ResultCode = ResultCode.Exception;
                 serviceResponse.Warnings.Add(ex.Message);

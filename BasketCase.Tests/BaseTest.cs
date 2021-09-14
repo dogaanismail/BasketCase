@@ -1,7 +1,11 @@
-﻿using BasketCase.Business.Interfaces.Logging;
+﻿using BasketCase.Business.Interfaces.Basket;
+using BasketCase.Business.Interfaces.Configuration;
+using BasketCase.Business.Interfaces.Logging;
 using BasketCase.Business.Interfaces.Product;
+using BasketCase.Business.Services.Configuration;
 using BasketCase.Business.Services.Logging;
 using BasketCase.Business.Services.Product;
+using BasketCase.Business.Services.ShoppingCart;
 using BasketCase.Core;
 using BasketCase.Core.Caching;
 using BasketCase.Core.Configuration;
@@ -77,6 +81,8 @@ namespace BasketCase.Tests
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<ILogService, LogService>();
             services.AddTransient<IProductVariantService, ProductVariantService>();
+            services.AddTransient<IShoppingCartService, ShoppingCartService>();
+            services.AddTransient<ISettingService, SettingService>();
 
             services.AddTransient<IWebHelper, WebHelper>();
 

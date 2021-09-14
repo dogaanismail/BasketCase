@@ -11,8 +11,8 @@ namespace BasketCase.Business.Events
         /// <summary>
         /// Handle event
         /// </summary>
-        /// <param name="eventMessage">Event</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <param name="eventMessage"></param>
+        /// <returns></returns>
         Task HandleEventAsync(T eventMessage);
     }
 }

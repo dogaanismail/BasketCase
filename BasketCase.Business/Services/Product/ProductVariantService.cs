@@ -7,6 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using BasketCase.Business.Interfaces.Logging;
+using BasketCase.Domain.Enumerations;
+using Newtonsoft.Json;
 
 namespace BasketCase.Business.Services.Product
 {
@@ -17,13 +20,16 @@ namespace BasketCase.Business.Services.Product
     {
         #region Fields
         private readonly IRepository<ProductVariant> _productVariantRepository;
+        private readonly ILogService _logService;
 
         #endregion
 
         #region Ctor
-        public ProductVariantService(IRepository<ProductVariant> productVariantRepository)
+        public ProductVariantService(IRepository<ProductVariant> productVariantRepository,
+            ILogService logService)
         {
             _productVariantRepository = productVariantRepository;
+            _logService = logService;
         }
 
         #endregion
@@ -73,14 +79,13 @@ namespace BasketCase.Business.Services.Product
 
             try
             {
-
                 ProductVariant variant = new()
                 {
                     ProductId = request.ProductId,
                     Sku = request.Sku,
                     Barcode = request.Barcode,
                     MinStockQuantity = request.MinStockQuantity,
-                    Quantity = request.Quantity
+                    StockQuantity = request.Quantity
                 };
 
                 await CreateAsync(variant);
@@ -89,6 +94,7 @@ namespace BasketCase.Business.Services.Product
             }
             catch (Exception ex)
             {
+                _ = _logService.InsertLogAsync(LogLevel.Error, $"ProductVariantService-CreateAsync Error: model {JsonConvert.SerializeObject(request)}", ex.Message.ToString());
                 serviceResponse.Success = false;
                 serviceResponse.ResultCode = ResultCode.Exception;
                 serviceResponse.Warnings.Add(ex.Message);

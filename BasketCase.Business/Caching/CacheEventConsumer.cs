@@ -37,9 +37,9 @@ namespace BasketCase.Business.Caching
         /// <summary>
         /// Clear cache by entity event type
         /// </summary>
-        /// <param name="entity">Entity</param>
-        /// <param name="entityEventType">Entity event type</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <param name="entity"></param>
+        /// <param name="entityEventType"></param>
+        /// <returns></returns>
         protected virtual async Task ClearCacheAsync(TEntity entity, EntityEventType entityEventType)
         {
             await RemoveByPrefixAsync(EntityCacheDefaults<TEntity>.ByIdsPrefix);
@@ -54,8 +54,8 @@ namespace BasketCase.Business.Caching
         /// <summary>
         /// Clear cache data
         /// </summary>
-        /// <param name="entity">Entity</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         protected virtual Task ClearCacheAsync(TEntity entity)
         {
             return Task.CompletedTask;
@@ -64,9 +64,9 @@ namespace BasketCase.Business.Caching
         /// <summary>
         /// Removes items by cache key prefix
         /// </summary>
-        /// <param name="prefix">Cache key prefix</param>
-        /// <param name="prefixParameters">Parameters to create cache key prefix</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <param name="prefix"></param>
+        /// <param name="prefixParameters"></param>
+        /// <returns></returns>
         protected virtual async Task RemoveByPrefixAsync(string prefix, params object[] prefixParameters)
         {
             await _staticCacheManager.RemoveByPrefixAsync(prefix, prefixParameters);
@@ -75,9 +75,9 @@ namespace BasketCase.Business.Caching
         /// <summary>
         /// Remove the value with the specified key from the cache
         /// </summary>
-        /// <param name="cacheKey">Cache key</param>
-        /// <param name="cacheKeyParameters">Parameters to create cache key</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <param name="cacheKey"></param>
+        /// <param name="cacheKeyParameters"></param>
+        /// <returns></returns>
         public async Task RemoveAsync(CacheKey cacheKey, params object[] cacheKeyParameters)
         {
             await _staticCacheManager.RemoveAsync(cacheKey, cacheKeyParameters);

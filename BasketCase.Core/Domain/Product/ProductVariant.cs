@@ -12,6 +12,6 @@ namespace BasketCase.Core.Domain.Product
 
         public int MinStockQuantity { get; set; }
 
-        public int Quantity { get; set; }
+        public int StockQuantity { get; set; }
     }
 }

@@ -29,5 +29,6 @@ namespace BasketCase.Tests.BasketCase.Domain.Tests.Validation.Product
             model.Name = string.Empty;
             _productCreateValidator.ShouldHaveValidationErrorFor(x => x.Name, model);
         }
+
     }
 }

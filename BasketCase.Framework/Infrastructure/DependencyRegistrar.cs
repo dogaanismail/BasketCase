@@ -1,11 +1,16 @@
 ﻿using BasketCase.Business.Events;
+using BasketCase.Business.Interfaces.Basket;
+using BasketCase.Business.Interfaces.Configuration;
 using BasketCase.Business.Interfaces.Logging;
 using BasketCase.Business.Interfaces.Product;
+using BasketCase.Business.Services.Configuration;
 using BasketCase.Business.Services.Logging;
 using BasketCase.Business.Services.Product;
+using BasketCase.Business.Services.ShoppingCart;
 using BasketCase.Core;
 using BasketCase.Core.Caching;
 using BasketCase.Core.Configuration;
+using BasketCase.Core.Configuration.Settings;
 using BasketCase.Core.Events;
 using BasketCase.Core.Infrastructure;
 using BasketCase.Core.Infrastructure.DependencyManagement;
@@ -38,6 +43,10 @@ namespace BasketCase.Framework.Infrastructure
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ILogService, LogService>();
             services.AddScoped<IProductVariantService, ProductVariantService>();
+            services.AddScoped<IShoppingCartService, ShoppingCartService>();
+            services.AddScoped<ISettingService, SettingService>();
+
+            services.AddSingleton<IEventPublisher, EventPublisher>();
 
             #region Caching implementations
             if (appConfig.DistributedCacheConfig.Enabled)
@@ -52,9 +61,8 @@ namespace BasketCase.Framework.Infrastructure
             }
 
             #endregion
-
-            services.AddSingleton<IEventPublisher, EventPublisher>();
-
+      
+            #region Consumer Dependency Registrations
             var consumers = typeFinder.FindClassesOfType(typeof(IConsumer<>)).ToList();
             foreach (var consumer in consumers)
                 foreach (var findInterface in consumer.FindInterfaces((type, criteria) =>
@@ -63,6 +71,23 @@ namespace BasketCase.Framework.Infrastructure
                     return isMatch;
                 }, typeof(IConsumer<>)))
                     services.AddScoped(findInterface, consumer);
+
+            #endregion
+
+            #region Setting Dependency Registrations
+            if (appConfig.CommonConfig.RegisterSettings)
+            {
+                var settings = typeFinder.FindClassesOfType(typeof(ISettings), false).ToList();
+                foreach (var setting in settings)
+                {
+                    services.AddScoped(setting, serviceProvider =>
+                    {
+                        return serviceProvider.GetRequiredService<ISettingService>().LoadSettingAsync(setting).Result;
+                    });
+                }
+            }
+
+            #endregion
         }
 
         /// <summary>

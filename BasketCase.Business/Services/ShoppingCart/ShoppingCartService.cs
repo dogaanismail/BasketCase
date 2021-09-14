@@ -1,5 +1,6 @@
 ﻿using BasketCase.Business.Interfaces.Basket;
 using BasketCase.Business.Interfaces.Logging;
+using BasketCase.Core.Configuration.Settings.ShoppingCart;
 using BasketCase.Core.Domain.Product;
 using BasketCase.Core.Domain.ShoppingCart;
 using BasketCase.Core.Events;
@@ -27,6 +28,7 @@ namespace BasketCase.Business.Services.ShoppingCart
         private readonly IRepository<ProductVariant> _productVariantRepository;
         private readonly ILogService _logService;
         private readonly IEventPublisher _eventPublisher;
+        //private readonly ShoppingCartSettings _shoppingCartSettings;
         #endregion
 
         #region Ctor
@@ -34,13 +36,15 @@ namespace BasketCase.Business.Services.ShoppingCart
             IRepository<ProductEntity> productRepository,
             IRepository<ProductVariant> productVariantRepository,
             ILogService logService,
-            IEventPublisher eventPublisher)
+            IEventPublisher eventPublisher
+            /*ShoppingCartSettings shoppingCartSettings*/)
         {
             _shoppingCartRepository = shoppingCartRepository;
             _productRepository = productRepository;
             _productVariantRepository = productVariantRepository;
             _logService = logService;
             _eventPublisher = eventPublisher;
+            //_shoppingCartSettings = shoppingCartSettings;
         }
         #endregion
 
@@ -84,13 +88,12 @@ namespace BasketCase.Business.Services.ShoppingCart
 
                     warnings.AddRange(GetShoppingCartItemWarnings(product, productVariant, newQuantity, true));
 
-                    if (!warnings.Any())
+                    if (warnings.Any())
                     {
                         _ = _logService.InsertLogAsync(LogLevel.Error, $"ShoppingCartService-AddToCartAsync Error ProductId: {product.Id} " +
                            $"VariantId:{productVariant.Id}", JsonConvert.SerializeObject(warnings));
                         return ServiceResponse((object)null, warnings);
                     }
-
 
                     shoppingCartItem.Quantity = newQuantity;
                     shoppingCartItem.UpdatedAt = DateTime.UtcNow;
@@ -102,7 +105,7 @@ namespace BasketCase.Business.Services.ShoppingCart
                 {
                     warnings.AddRange(GetShoppingCartItemWarnings(product, productVariant, request.Quantity, true));
 
-                    if (!warnings.Any())
+                    if (warnings.Any())
                     {
                         _ = _logService.InsertLogAsync(LogLevel.Error, $"ShoppingCartService-AddToCartAsync Error ProductId: {product.Id} " +
                            $"VariantId:{productVariant.Id}", JsonConvert.SerializeObject(warnings));
@@ -150,6 +153,9 @@ namespace BasketCase.Business.Services.ShoppingCart
             if (getStandardWarnings)
                 warnings.AddRange(GetRequiredProductWarnings(product));
 
+            if (getVariantStockWarnings)
+                warnings.AddRange(GetVariantStockWarnings(productVariant, quantity));
+
             return warnings;
         }
 
@@ -168,12 +174,31 @@ namespace BasketCase.Business.Services.ShoppingCart
                 warnings.Add($"Product was deleted!");
 
             if (!product.Published)
-                warnings.Add("Product is not published");
+                warnings.Add("Product is not published!");
 
             if (product.NewPrice < 1)
                 warnings.Add("Product price is less than 1!");
 
             return warnings;
+        }
+
+        private IList<string> GetVariantStockWarnings(ProductVariant productVariant, int quantity = 1)
+        {
+            var warnings = new List<string>();
+
+            //if (_shoppingCartSettings.MinStockQuantityControl)
+            //{
+            //    if (quantity > (productVariant.StockQuantity - productVariant.MinStockQuantity))
+            //    {
+            //        warnings.Add("Product is out of stock!");
+            //        return warnings;
+            //    }
+            //}
+
+            if (productVariant.StockQuantity < quantity)
+                warnings.Add("Product is out of stock!");
+
+            return new List<string> { "" };
         }
 
         /// <summary>

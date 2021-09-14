@@ -88,7 +88,7 @@ namespace BasketCase.Api.Controllers
             return OkResponse(data);
         }
 
-        [HttpGet("get-list}")]
+        [HttpGet("get-list")]
         [AllowAnonymous]
         public virtual IActionResult GetList()
         {

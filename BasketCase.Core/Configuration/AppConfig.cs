@@ -27,6 +27,11 @@ namespace BasketCase.Core.Configuration
         public MongoDbConfig MongoDbConfig { get; set; } = new MongoDbConfig();
 
         /// <summary>
+        /// Gets or sets common configuration parameters
+        /// </summary>
+        public CommonConfig CommonConfig { get; set; } = new CommonConfig();
+
+        /// <summary>
         /// Gets or sets additional configuration parameters
         /// </summary>
         [JsonExtensionData]

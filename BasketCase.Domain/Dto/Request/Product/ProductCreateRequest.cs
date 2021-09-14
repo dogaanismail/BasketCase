@@ -15,5 +15,9 @@
         public decimal OldPrice { get; set; }
 
         public decimal NewPrice { get; set; }
+
+        public bool Deleted { get; set; }
+
+        public bool Published { get; set; }
     }
 }

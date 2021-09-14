@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Net.Http.Headers;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Net;
 
@@ -54,7 +53,6 @@ namespace BasketCase.Framework.Infrastructure.Extensions
 
             else
                 application.UseHsts();
-
         }
 
         /// <summary>
