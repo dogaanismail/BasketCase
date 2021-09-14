@@ -6,6 +6,7 @@ using BasketCase.Domain.Dto.Request.Product;
 using BasketCase.Repository.Generic;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ProductEntity = BasketCase.Core.Domain.Product.Product;
 
@@ -105,6 +106,33 @@ namespace BasketCase.Business.Services.Product
             }
         }
 
+        public virtual async Task DeleteAsync(ProductEntity product)
+        {
+            if (product == null)
+                throw new ArgumentNullException(nameof(product));
+
+            await _productRepository.DeleteAsync(product);
+
+            await _eventPublisher.EntityDeletedAsync(product);
+        }
+
+        /// <summary>
+        /// Deletes a post by productId
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        public virtual async Task DeleteAsync(string productId)
+        {
+            if (string.IsNullOrEmpty(productId))
+                throw new ArgumentNullException(nameof(productId));
+
+            var product = await GetByIdAsync(productId);
+
+            await _productRepository.DeleteAsync(productId);
+
+            await _eventPublisher.EntityDeletedAsync(product);
+        }
+
         /// <summary>
         /// Gets a product by id
         /// </summary>
@@ -121,6 +149,29 @@ namespace BasketCase.Business.Services.Product
             {
                 return await _productRepository.GetByIdAsync(productId);
             });
+        }
+
+        /// <summary>
+        /// Gets product list
+        /// </summary>
+        /// <returns></returns>
+        public List<ProductEntity> GetProducts()
+        {
+            return _productRepository.Get().ToList();
+        }
+
+        /// <summary>
+        /// Updates a product
+        /// </summary>
+        /// <param name="product"></param>
+        public virtual async Task UpdateAsync(ProductEntity product)
+        {
+            if (product == null)
+                throw new ArgumentNullException(nameof(product));
+
+            await _productRepository.UpdateAsync(product, x => x.Id == product.Id);
+
+            await _eventPublisher.EntityUpdatedAsync(product);
         }
 
         #endregion

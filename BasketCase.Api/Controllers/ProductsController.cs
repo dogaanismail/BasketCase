@@ -59,6 +59,26 @@ namespace BasketCase.Api.Controllers
             });
         }
 
+        [HttpDelete("delete-product/id/{id}")]
+        [AllowAnonymous]
+        public virtual async Task<IActionResult> DeleteAsync(string id)
+        {
+            await _productService.DeleteAsync(id);
+
+            return OkResponse(new ResultModel(true, "Product has been deleted!"));
+        }
+
+        [HttpPut("update-product/id/{id}")]
+        [AllowAnonymous]
+        public virtual async Task<IActionResult> UpdateAsync(string id)
+        {
+            var product = await _productService.GetByIdAsync(id);
+
+            await _productService.UpdateAsync(product);
+
+            return OkResponse(new ResultModel(true, "Product has been deleted!"));
+        }
+
         [HttpGet("id/{id}")]
         [AllowAnonymous]
         public virtual async Task<IActionResult> GetByIdAsync(string id)
@@ -67,6 +87,16 @@ namespace BasketCase.Api.Controllers
 
             return OkResponse(data);
         }
+
+        [HttpGet("get-list}")]
+        [AllowAnonymous]
+        public virtual IActionResult GetList()
+        {
+            var data = _productService.GetProducts();
+
+            return OkResponse(data);
+        }
+
 
         #endregion
     }

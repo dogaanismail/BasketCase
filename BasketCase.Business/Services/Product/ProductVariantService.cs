@@ -6,6 +6,7 @@ using BasketCase.Repository.Generic;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace BasketCase.Business.Services.Product
 {
@@ -96,6 +97,19 @@ namespace BasketCase.Business.Services.Product
         }
 
         /// <summary>
+        /// Deletes a product variant
+        /// </summary>
+        /// <param name="productVariant"></param>
+        /// <returns></returns>
+        public virtual async Task DeleteAsync(ProductVariant productVariant)
+        {
+            if (productVariant == null)
+                throw new ArgumentNullException(nameof(productVariant));
+
+            await _productVariantRepository.DeleteAsync(productVariant);
+        }
+
+        /// <summary>
         /// Gets a product variant by id
         /// </summary>
         /// <param name="variantId"></param>
@@ -119,6 +133,15 @@ namespace BasketCase.Business.Services.Product
                 throw new ArgumentNullException(nameof(productId));
 
             return await _productVariantRepository.GetAsync(x => x.ProductId == productId);
+        }
+
+        /// <summary>
+        /// Gets product variant lists
+        /// </summary>
+        /// <returns></returns>
+        public virtual List<ProductVariant> GetVariants()
+        {
+            return _productVariantRepository.Get().ToList();
         }
 
         #endregion

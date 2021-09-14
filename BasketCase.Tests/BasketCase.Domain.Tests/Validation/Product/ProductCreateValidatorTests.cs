@@ -26,8 +26,6 @@ namespace BasketCase.Tests.BasketCase.Domain.Tests.Validation.Product
 
             _productCreateValidator.ShouldHaveValidationErrorFor(x => x.Name, model);
 
-            _productCreateValidator.ShouldHaveValidationErrorFor(x => x.Name, model);
-
             model.Name = string.Empty;
             _productCreateValidator.ShouldHaveValidationErrorFor(x => x.Name, model);
         }

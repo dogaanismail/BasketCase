@@ -14,20 +14,39 @@ namespace BasketCase.Business.Interfaces.Product
         /// <summary>
         /// Inserts a product
         /// </summary>
-        /// <param name="post"></param>
+        /// <param name="product"></param>
         Task CreateAsync(ProductEntity product);
 
         /// <summary>
         /// Inserts products by using bulk
         /// </summary>
-        /// <param name="post"></param>
+        /// <param name="products"></param>
         Task CreateAsync(List<ProductEntity> products);
 
         /// <summary>
         /// Inserts a product
         /// </summary>
-        /// <param name="post"></param>
+        /// <param name="request"></param>
         Task<ServiceResponse<object>> CreateAsync(ProductCreateRequest request);
+
+        /// <summary>
+        /// Deletes a product
+        /// </summary>
+        /// <param name="product"></param>
+        Task DeleteAsync(ProductEntity product);
+
+        /// <summary>
+        /// Deletes a post by productId
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        Task DeleteAsync(string productId);
+
+        /// <summary>
+        /// Updates a product
+        /// </summary>
+        /// <param name="product"></param>
+        Task UpdateAsync(ProductEntity product);
 
         /// <summary>
         /// Gets a product by id
@@ -35,5 +54,11 @@ namespace BasketCase.Business.Interfaces.Product
         /// <param name="productId"></param>
         /// <returns></returns>
         Task<ProductEntity> GetByIdAsync(string productId);
+
+        /// <summary>
+        /// Gets product list
+        /// </summary>
+        /// <returns></returns>
+        List<ProductEntity> GetProducts();
     }
 }

@@ -3,8 +3,10 @@ using BasketCase.Core.Attributes;
 using BasketCase.Core.Configuration;
 using BasketCase.Core.Infrastructure;
 using BasketCase.Domain.Dto.Request.Product;
+using BasketCase.Domain.Dto.Request.ShoppingCart;
 using BasketCase.Domain.Enumerations;
 using BasketCase.Domain.Validation.Product;
+using BasketCase.Domain.Validation.ShoppingCart;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -178,6 +180,7 @@ namespace BasketCase.Framework.Infrastructure.Extensions
         public static void AddSystemValidator(this IServiceCollection services)
         {
             services.AddSingleton<IValidator<ProductCreateRequest>, ProductCreateValidator>();
+            services.AddSingleton<IValidator<AddToCartRequest>, AddToCartValidator>();
         }
     }
 }

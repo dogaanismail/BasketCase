@@ -19,6 +19,10 @@ namespace BasketCase.Core.Domain.Product
 
         public decimal NewPrice { get; set; }
 
+        public bool Deleted { get; set; }
+
+        public bool Published { get; set; }
+
         public virtual ICollection<ProductVariant> Variants { get; set; }
     }
 }
