@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ProductEntity = BasketCase.Core.Domain.Product.Product;
 
-namespace BasketCase.Tests.DevPlatform.Services.Tests.ShoppingCart
+namespace BasketCase.Tests.BasketCase.Services.Tests.ShoppingCart
 {
     [TestFixture]
     public class ShoppingCartServiceTests : ServiceTest
