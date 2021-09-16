@@ -59,6 +59,6 @@ namespace BasketCase.Business.Interfaces.Product
         /// Gets product list
         /// </summary>
         /// <returns></returns>
-        List<ProductEntity> GetProducts();
+        Task<List<ProductEntity>> GetListAsync();
     }
 }

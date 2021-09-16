@@ -53,10 +53,7 @@ namespace BasketCase.Api.Controllers
                 });
             }
 
-            return OkResponse(new object
-            {
-
-            });
+            return OkResponse(new ResultModel(true, "Product has been added!"));
         }
 
         [HttpDelete("delete-product/id/{id}")]
@@ -90,13 +87,12 @@ namespace BasketCase.Api.Controllers
 
         [HttpGet("get-list")]
         [AllowAnonymous]
-        public virtual IActionResult GetList()
+        public virtual async Task<IActionResult> GetListAsync()
         {
-            var data = _productService.GetProducts();
+            var data = await _productService.GetListAsync();
 
             return OkResponse(data);
         }
-
 
         #endregion
     }

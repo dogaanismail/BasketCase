@@ -24,7 +24,7 @@ namespace BasketCase.Business.Interfaces.Configuration
         /// Gets all settings
         /// </summary>
         /// <returns></returns>
-        IList<Setting> GetAllSettings();
+        Task<IList<Setting>> GetListAsync();
 
         /// <summary>
         /// Load settings

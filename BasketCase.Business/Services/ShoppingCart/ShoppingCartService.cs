@@ -8,6 +8,7 @@ using BasketCase.Domain.Common;
 using BasketCase.Domain.Dto.Request.ShoppingCart;
 using BasketCase.Domain.Enumerations;
 using BasketCase.Repository.Generic;
+using MongoDB.Bson;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace BasketCase.Business.Services.ShoppingCart
         private readonly IRepository<ProductVariant> _productVariantRepository;
         private readonly ILogService _logService;
         private readonly IEventPublisher _eventPublisher;
-        //private readonly ShoppingCartSettings _shoppingCartSettings;
+        private readonly ShoppingCartSettings _shoppingCartSettings;
         #endregion
 
         #region Ctor
@@ -36,15 +37,15 @@ namespace BasketCase.Business.Services.ShoppingCart
             IRepository<ProductEntity> productRepository,
             IRepository<ProductVariant> productVariantRepository,
             ILogService logService,
-            IEventPublisher eventPublisher
-            /*ShoppingCartSettings shoppingCartSettings*/)
+            IEventPublisher eventPublisher,
+            ShoppingCartSettings shoppingCartSettings)
         {
             _shoppingCartRepository = shoppingCartRepository;
             _productRepository = productRepository;
             _productVariantRepository = productVariantRepository;
             _logService = logService;
             _eventPublisher = eventPublisher;
-            //_shoppingCartSettings = shoppingCartSettings;
+            _shoppingCartSettings = shoppingCartSettings;
         }
         #endregion
 
@@ -99,6 +100,7 @@ namespace BasketCase.Business.Services.ShoppingCart
                     shoppingCartItem.UpdatedAt = DateTime.UtcNow;
                     await _shoppingCartRepository.UpdateAsync(shoppingCartItem.Id, shoppingCartItem);
                     await _eventPublisher.EntityUpdatedAsync(shoppingCartItem);
+                    serviceResponse.ResultCode = ResultCode.Success;
                     return serviceResponse;
                 }
                 else
@@ -114,6 +116,7 @@ namespace BasketCase.Business.Services.ShoppingCart
 
                     shoppingCartItem = new ShoppingCartItem
                     {
+                        Id = ObjectId.GenerateNewId().ToString(),
                         ProductId = request.ProductId,
                         VariantId = request.ProductVariantId,
                         Quantity = request.Quantity,
@@ -122,6 +125,7 @@ namespace BasketCase.Business.Services.ShoppingCart
 
                     await _shoppingCartRepository.AddAsync(shoppingCartItem);
                     await _eventPublisher.EntityInsertedAsync(shoppingCartItem);
+                    serviceResponse.ResultCode = ResultCode.Success;
                     return serviceResponse;
                 }
             }
@@ -186,19 +190,19 @@ namespace BasketCase.Business.Services.ShoppingCart
         {
             var warnings = new List<string>();
 
-            //if (_shoppingCartSettings.MinStockQuantityControl)
-            //{
-            //    if (quantity > (productVariant.StockQuantity - productVariant.MinStockQuantity))
-            //    {
-            //        warnings.Add("Product is out of stock!");
-            //        return warnings;
-            //    }
-            //}
+            if (_shoppingCartSettings.MinStockQuantityControl)
+            {
+                if (quantity > (productVariant.StockQuantity - productVariant.MinStockQuantity))
+                {
+                    warnings.Add("Product is out of stock!");
+                    return warnings;
+                }
+            }
 
             if (productVariant.StockQuantity < quantity)
                 warnings.Add("Product is out of stock!");
 
-            return new List<string> { "" };
+            return warnings;
         }
 
         /// <summary>

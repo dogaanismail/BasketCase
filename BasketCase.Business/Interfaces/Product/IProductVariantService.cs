@@ -31,6 +31,13 @@ namespace BasketCase.Business.Interfaces.Product
         Task DeleteAsync(ProductVariant productVariant);
 
         /// <summary>
+        /// Deletes a product variant
+        /// </summary>
+        /// <param name="variantId"></param>
+        /// <returns></returns>
+        Task DeleteAsync(string variantId);
+
+        /// <summary>
         /// Gets a product variant by id
         /// </summary>
         /// <param name="variantId"></param>
@@ -42,7 +49,7 @@ namespace BasketCase.Business.Interfaces.Product
         /// </summary>
         /// <param name="variantId"></param>
         /// <returns></returns>
-        Task<ProductVariant> GetByProductIdAsync(string productId);
+        Task<List<ProductVariant>> GetByProductIdAsync(string productId);
 
         /// <summary>
         /// Inserts a product variant
@@ -54,6 +61,6 @@ namespace BasketCase.Business.Interfaces.Product
         /// Gets product variant lists
         /// </summary>
         /// <returns></returns>
-        List<ProductVariant> GetVariants();
+        Task<List<ProductVariant>> GetListAsync();
     }
 }

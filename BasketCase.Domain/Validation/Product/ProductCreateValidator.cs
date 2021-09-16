@@ -10,10 +10,6 @@ namespace BasketCase.Domain.Validation.Product
         {
             RuleFor(p => p.Name).NotEmpty().When(prod => String.IsNullOrEmpty(prod.Name)).
                 WithMessage(x => string.Format(ValidationMessage.RequiredField, nameof(x.Name)));
-
-            RuleFor(p => p.Published).NotEmpty().WithMessage(x => string.Format(ValidationMessage.RequiredField, nameof(x.Published)));
-
-            RuleFor(p => p.Deleted).NotEmpty().WithMessage(x => string.Format(ValidationMessage.RequiredField, nameof(x.Deleted)));
         }
     }
 }

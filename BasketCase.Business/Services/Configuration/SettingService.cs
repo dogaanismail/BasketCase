@@ -42,7 +42,7 @@ namespace BasketCase.Business.Services.Configuration
         {
             return await _staticCacheManager.GetAsync(SystemConfigurationDefaults.SettingsAllAsDictionaryCacheKey, async () =>
             {
-                var settings = GetAllSettings();
+                var settings = await GetListAsync();
 
                 var dictionary = new Dictionary<string, IList<Setting>>();
                 foreach (var s in settings)
@@ -97,9 +97,9 @@ namespace BasketCase.Business.Services.Configuration
         /// Gets all setting
         /// </summary>
         /// <returns></returns>
-        public virtual IList<Setting> GetAllSettings()
+        public virtual async Task<IList<Setting>> GetListAsync()
         {
-            var settings = _settingRepository.Get().OrderBy(st => st.Name).ToList();
+            var settings = await _settingRepository.GetListAsync();
             return settings;
         }
 

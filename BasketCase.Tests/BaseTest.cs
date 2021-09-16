@@ -1,4 +1,5 @@
-﻿using BasketCase.Business.Interfaces.Basket;
+﻿using BasketCase.Business.Events;
+using BasketCase.Business.Interfaces.Basket;
 using BasketCase.Business.Interfaces.Configuration;
 using BasketCase.Business.Interfaces.Logging;
 using BasketCase.Business.Interfaces.Product;
@@ -9,6 +10,7 @@ using BasketCase.Business.Services.ShoppingCart;
 using BasketCase.Core;
 using BasketCase.Core.Caching;
 using BasketCase.Core.Configuration;
+using BasketCase.Core.Configuration.Settings;
 using BasketCase.Core.Infrastructure;
 using BasketCase.Repository.Generic;
 using Microsoft.AspNetCore.Hosting;
@@ -78,13 +80,37 @@ namespace BasketCase.Tests
             services.AddSingleton<ILocker, MemoryCacheManager>();
 
             services.AddTransient(typeof(IRepository<>), typeof(RepositoryBase<>));
+           
+            services.AddTransient<IWebHelper, WebHelper>();
+
+            #region Services Dependency Registrations
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<ILogService, LogService>();
             services.AddTransient<IProductVariantService, ProductVariantService>();
             services.AddTransient<IShoppingCartService, ShoppingCartService>();
             services.AddTransient<ISettingService, SettingService>();
+            #endregion
 
-            services.AddTransient<IWebHelper, WebHelper>();
+            #region Consumer Dependency Registrations
+            var consumers = typeFinder.FindClassesOfType(typeof(IConsumer<>)).ToList();
+            foreach (var consumer in consumers)
+                foreach (var findInterface in consumer.FindInterfaces((type, criteria) =>
+                {
+                    var isMatch = type.IsGenericType && ((Type)criteria).IsAssignableFrom(type.GetGenericTypeDefinition());
+                    return isMatch;
+                }, typeof(IConsumer<>)))
+                    services.AddTransient(findInterface, consumer);
+
+            #endregion
+
+            #region Setting Dependency Registrations
+
+            var settings = typeFinder.FindClassesOfType(typeof(ISettings), false).ToList();
+            foreach (var setting in settings)
+                services.AddTransient(setting,
+                    context => context.GetRequiredService<ISettingService>().LoadSettingAsync(setting).Result);
+
+            #endregion
 
             _serviceProvider = services.BuildServiceProvider();
 

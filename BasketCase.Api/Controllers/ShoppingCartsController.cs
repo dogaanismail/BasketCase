@@ -51,10 +51,7 @@ namespace BasketCase.Api.Controllers
                 });
             }
 
-            return OkResponse(new object
-            {
-
-            });
+            return OkResponse(new ResultModel(true, "Product has been added to the cart!"));
         }
 
         #endregion

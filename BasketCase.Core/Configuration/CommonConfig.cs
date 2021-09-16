@@ -8,6 +8,6 @@
         /// <summary>
         /// Gets or sets register settings
         /// </summary>
-        public bool RegisterSettings { get; set; } = false;
+        public bool RegisterSettings { get; set; } = true;
     }
 }

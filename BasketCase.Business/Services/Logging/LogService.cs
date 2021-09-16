@@ -3,6 +3,7 @@ using BasketCase.Core;
 using BasketCase.Core.Domain.Logging;
 using BasketCase.Domain.Enumerations;
 using BasketCase.Repository.Generic;
+using MongoDB.Bson;
 using System;
 using System.Threading.Tasks;
 
@@ -64,6 +65,7 @@ namespace BasketCase.Business.Services.Logging
         {
             var log = new Log
             {
+                Id = ObjectId.GenerateNewId().ToString(),
                 LogLevel = logLevel,
                 ShortMessage = shortMessage,
                 FullMessage = fullMessage,

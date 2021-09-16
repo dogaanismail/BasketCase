@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 using System;
 
 namespace BasketCase.Core.Entities
@@ -9,10 +10,9 @@ namespace BasketCase.Core.Entities
     /// </summary>
     public abstract class BaseEntity : IEntity<string>
     {
-        [BsonRepresentation(BsonType.ObjectId)]
         [BsonId]
-        [BsonElement(Order = 0)]
-        public string Id { get; } = ObjectId.GenerateNewId().ToString();
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; } 
 
         [BsonRepresentation(BsonType.DateTime)]
         [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]

@@ -6,10 +6,10 @@ using BasketCase.Repository.Generic;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
 using BasketCase.Business.Interfaces.Logging;
 using BasketCase.Domain.Enumerations;
 using Newtonsoft.Json;
+using MongoDB.Bson;
 
 namespace BasketCase.Business.Services.Product
 {
@@ -81,6 +81,7 @@ namespace BasketCase.Business.Services.Product
             {
                 ProductVariant variant = new()
                 {
+                    Id = ObjectId.GenerateNewId().ToString(),
                     ProductId = request.ProductId,
                     Sku = request.Sku,
                     Barcode = request.Barcode,
@@ -90,6 +91,7 @@ namespace BasketCase.Business.Services.Product
 
                 await CreateAsync(variant);
 
+                serviceResponse.ResultCode = ResultCode.Success;
                 return serviceResponse;
             }
             catch (Exception ex)
@@ -116,6 +118,19 @@ namespace BasketCase.Business.Services.Product
         }
 
         /// <summary>
+        /// Deletes a product variant
+        /// </summary>
+        /// <param name="variantId"></param>
+        /// <returns></returns>
+        public virtual async Task DeleteAsync(string variantId)
+        {
+            if (variantId == null)
+                throw new ArgumentNullException(nameof(variantId));
+
+            await _productVariantRepository.DeleteAsync(variantId);
+        }
+
+        /// <summary>
         /// Gets a product variant by id
         /// </summary>
         /// <param name="variantId"></param>
@@ -133,21 +148,21 @@ namespace BasketCase.Business.Services.Product
         /// </summary>
         /// <param name="productId"></param>
         /// <returns></returns>
-        public virtual async Task<ProductVariant> GetByProductIdAsync(string productId)
+        public virtual async Task<List<ProductVariant>> GetByProductIdAsync(string productId)
         {
             if (string.IsNullOrEmpty(productId))
                 throw new ArgumentNullException(nameof(productId));
 
-            return await _productVariantRepository.GetAsync(x => x.ProductId == productId);
+            return await _productVariantRepository.GetListAsync(x => x.ProductId == productId);
         }
 
         /// <summary>
         /// Gets product variant lists
         /// </summary>
         /// <returns></returns>
-        public virtual List<ProductVariant> GetVariants()
+        public virtual async Task<List<ProductVariant>> GetListAsync()
         {
-            return _productVariantRepository.Get().ToList();
+            return await _productVariantRepository.GetListAsync();
         }
 
         #endregion

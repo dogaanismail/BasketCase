@@ -6,10 +6,10 @@ using BasketCase.Domain.Common;
 using BasketCase.Domain.Dto.Request.Product;
 using BasketCase.Domain.Enumerations;
 using BasketCase.Repository.Generic;
+using MongoDB.Bson;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ProductEntity = BasketCase.Core.Domain.Product.Product;
 
@@ -92,14 +92,18 @@ namespace BasketCase.Business.Services.Product
             {
                 ProductEntity product = new()
                 {
+                    Id = ObjectId.GenerateNewId().ToString(),
                     Name = request.Name,
                     ShortDescription = request.ShortDescription,
                     FullDescription = request.AlternativeName,
-                    Title = request.Title
+                    Title = request.Title,
+                    OldPrice = request.OldPrice,
+                    NewPrice = request.NewPrice
                 };
 
                 await CreateAsync(product);
 
+                serviceResponse.ResultCode = ResultCode.Success;
                 return serviceResponse;
             }
             catch (Exception ex)
@@ -161,9 +165,14 @@ namespace BasketCase.Business.Services.Product
         /// Gets product list
         /// </summary>
         /// <returns></returns>
-        public List<ProductEntity> GetProducts()
+        public virtual async Task<List<ProductEntity>> GetListAsync()
         {
-            return _productRepository.Get().ToList();
+            var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(EntityCacheDefaults<ProductEntity>.AllCacheKey);
+
+            return await _staticCacheManager.GetAsync(cacheKey, async () =>
+            {
+                return await _productRepository.GetListAsync();
+            });
         }
 
         /// <summary>

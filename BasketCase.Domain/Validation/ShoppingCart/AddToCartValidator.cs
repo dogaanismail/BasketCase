@@ -1,6 +1,5 @@
 ﻿using BasketCase.Domain.Dto.Request.ShoppingCart;
 using FluentValidation;
-using System;
 
 namespace BasketCase.Domain.Validation.ShoppingCart
 {
@@ -10,7 +9,7 @@ namespace BasketCase.Domain.Validation.ShoppingCart
         {
             RuleFor(p => p.Quantity).NotNull().WithMessage(x => string.Format(ValidationMessage.RequiredField, nameof(x.Quantity)))
                 .GreaterThan(0)
-                .WithMessage(ValidationMessage.GreaterThan(0));
+                .WithMessage(prod => ValidationMessage.GreaterThan(nameof(prod.Quantity), 0));
 
             RuleFor(p => p.ProductId).NotEmpty().WithMessage(x => string.Format(ValidationMessage.RequiredField, nameof(x.ProductId)));
 

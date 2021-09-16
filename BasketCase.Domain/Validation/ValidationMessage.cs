@@ -8,7 +8,7 @@
         public const string RequiredDate = "Date Format is wrong !ş";
         public const string RequiredPhone = "Phone Number is wrong !";
         public const string InvalidValue = "{0} field is invalid!";
-        
+
         public static string MaxLength(int length)
         {
             return $"You can enter at most {length} character !";
@@ -19,9 +19,9 @@
             return $"You can enter at least {length} character !";
         }
 
-        public static string GreaterThan(int value)
+        public static string GreaterThan(string field, int value)
         {
-            return $" The number has to be greater than {value}";
+            return $"{field} has to be greater than {value}";
         }
 
         public static string GreaterThan(string value)

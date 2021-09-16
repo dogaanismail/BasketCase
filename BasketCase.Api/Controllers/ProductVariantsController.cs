@@ -52,10 +52,7 @@ namespace BasketCase.Api.Controllers
                 });
             }
 
-            return OkResponse(new object
-            {
-
-            });
+            return OkResponse(new ResultModel(true, "Product variant has been added!"));
         }
 
         [HttpGet("id/{id}")]
@@ -72,6 +69,24 @@ namespace BasketCase.Api.Controllers
         public virtual async Task<IActionResult> GetByProductIdAsync(string productId)
         {
             var data = await _productVariantService.GetByProductIdAsync(productId);
+
+            return OkResponse(data);
+        }
+
+        [HttpDelete("delete-product-variant/id/{id}")]
+        [AllowAnonymous]
+        public virtual async Task<IActionResult> DeleteAsync(string id)
+        {
+            await _productVariantService.DeleteAsync(id);
+
+            return OkResponse(new ResultModel(true, "Product variant has been deleted!"));
+        }
+
+        [HttpGet("get-list")]
+        [AllowAnonymous]
+        public virtual async Task<IActionResult> GetListAsync()
+        {
+            var data = await _productVariantService.GetListAsync();
 
             return OkResponse(data);
         }
