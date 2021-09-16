@@ -38,7 +38,7 @@ namespace BasketCase.Api.Controllers
         [AllowAnonymous]
         public virtual async Task<IActionResult> CreateAsync([FromBody] ProductCreateRequest request)
         {
-            _ = _logService.InsertLogAsync(LogLevel.Information, $"ProductsController - CreateAsyncRequest", JsonConvert.SerializeObject(request));
+            _ = _logService.InsertLogAsync(LogLevel.Information, $"ProductsController - CreateAsync Request", JsonConvert.SerializeObject(request));
 
             var serviceResponse = await _productService.CreateAsync(request);
 
@@ -65,22 +65,33 @@ namespace BasketCase.Api.Controllers
             return OkResponse(new ResultModel(true, "Product has been deleted!"));
         }
 
-        [HttpPut("update-product/id/{id}")]
+        [HttpPut("update-product")]
         [AllowAnonymous]
-        public virtual async Task<IActionResult> UpdateAsync(string id)
+        public virtual async Task<IActionResult> UpdateAsync(ProductUpdateRequest request)
         {
-            var product = await _productService.GetByIdAsync(id);
+            _ = _logService.InsertLogAsync(LogLevel.Information, $"ProductsController - UpdateAsync Request", JsonConvert.SerializeObject(request));
 
-            await _productService.UpdateAsync(product);
+            var serviceResponse = await _productService.UpdateAsync(request);
 
-            return OkResponse(new ResultModel(true, "Product has been deleted!"));
+            if (serviceResponse.Warnings.Count > 0 || serviceResponse.Warnings.Any())
+            {
+                _ = _logService.InsertLogAsync(LogLevel.Error, $"ProductsController - UpdateAsync Error", JsonConvert.SerializeObject(serviceResponse));
+
+                return BadResponse(new ResultModel
+                {
+                    Status = false,
+                    Message = string.Join(Environment.NewLine, serviceResponse.Warnings.Select(err => string.Join(Environment.NewLine, err)))
+                });
+            }
+
+            return OkResponse(new ResultModel(true, "Product has been updated!"));
         }
 
         [HttpGet("id/{id}")]
         [AllowAnonymous]
         public virtual async Task<IActionResult> GetByIdAsync(string id)
         {
-            var data = await _productService.GetByIdAsync(id);
+            var data = await _productService.GetByIdDtoAsync(id);
 
             return OkResponse(data);
         }

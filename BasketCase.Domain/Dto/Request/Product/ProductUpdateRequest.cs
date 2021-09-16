@@ -1,8 +1,9 @@
-﻿namespace BasketCase.Domain.Dto.Response.Product
+﻿namespace BasketCase.Domain.Dto.Request.Product
 {
-    public class ProductDto
+    public class ProductUpdateRequest
     {
         public string Id { get; set; }
+
         public string Name { get; set; }
 
         public string ShortDescription { get; set; }

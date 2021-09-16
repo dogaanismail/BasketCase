@@ -22,4 +22,8 @@
     <ProjectReference Include="..\BasketCase.Repository\BasketCase.Repository.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DevPlatform.Services.Tests\Product\" />
+  </ItemGroup>
+
 </Project>

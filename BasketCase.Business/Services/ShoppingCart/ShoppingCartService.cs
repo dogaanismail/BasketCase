@@ -101,6 +101,7 @@ namespace BasketCase.Business.Services.ShoppingCart
                     await _shoppingCartRepository.UpdateAsync(shoppingCartItem.Id, shoppingCartItem);
                     await _eventPublisher.EntityUpdatedAsync(shoppingCartItem);
                     serviceResponse.ResultCode = ResultCode.Success;
+                    serviceResponse.Data = new ResultModel(true, "Shopping cart item has been updated!");
                     return serviceResponse;
                 }
                 else
@@ -126,6 +127,7 @@ namespace BasketCase.Business.Services.ShoppingCart
                     await _shoppingCartRepository.AddAsync(shoppingCartItem);
                     await _eventPublisher.EntityInsertedAsync(shoppingCartItem);
                     serviceResponse.ResultCode = ResultCode.Success;
+                    serviceResponse.Data = new ResultModel(true, "Shopping cart item has been added succesfully!");
                     return serviceResponse;
                 }
             }

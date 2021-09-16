@@ -1,15 +1,20 @@
-﻿using BasketCase.Business.Interfaces.Logging;
+﻿using AutoMapper;
+using BasketCase.Business.Interfaces.Logging;
 using BasketCase.Business.Interfaces.Product;
 using BasketCase.Core.Caching;
 using BasketCase.Core.Events;
+using BasketCase.Core.Infrastructure.Mapper;
 using BasketCase.Domain.Common;
 using BasketCase.Domain.Dto.Request.Product;
+using BasketCase.Domain.Dto.Response.Product;
 using BasketCase.Domain.Enumerations;
 using BasketCase.Repository.Generic;
 using MongoDB.Bson;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using ProductEntity = BasketCase.Core.Domain.Product.Product;
 
@@ -148,6 +153,25 @@ namespace BasketCase.Business.Services.Product
         /// </summary>
         /// <param name="productId"></param>
         /// <returns></returns>
+        public virtual async Task<ProductDto> GetByIdDtoAsync(string productId)
+        {
+            if (string.IsNullOrEmpty(productId))
+                throw new ArgumentNullException(nameof(productId));
+
+            var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(EntityCacheDefaults<ProductEntity>.ByIdCacheKey, productId);
+
+            return await _staticCacheManager.GetAsync(cacheKey, async () =>
+            {
+                var product = await _productRepository.GetByIdAsync(productId);
+                return AutoMapperConfiguration.Mapper.Map<ProductDto>(product);
+            });
+        }
+
+        /// <summary>
+        /// Gets a product by id
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
         public virtual async Task<ProductEntity> GetByIdAsync(string productId)
         {
             if (string.IsNullOrEmpty(productId))
@@ -165,13 +189,14 @@ namespace BasketCase.Business.Services.Product
         /// Gets product list
         /// </summary>
         /// <returns></returns>
-        public virtual async Task<List<ProductEntity>> GetListAsync()
+        public virtual async Task<List<ProductDto>> GetListAsync()
         {
             var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(EntityCacheDefaults<ProductEntity>.AllCacheKey);
 
             return await _staticCacheManager.GetAsync(cacheKey, async () =>
             {
-                return await _productRepository.GetListAsync();
+                var productList = await _productRepository.GetListAsync();
+                return AutoMapperConfiguration.Mapper.Map<List<ProductDto>>(productList);
             });
         }
 
@@ -189,6 +214,61 @@ namespace BasketCase.Business.Services.Product
             await _eventPublisher.EntityUpdatedAsync(product);
         }
 
+        /// <summary>
+        /// Updates a product
+        /// </summary>
+        /// <param name="request"></param>
+        public virtual async Task<ServiceResponse<object>> UpdateAsync(ProductUpdateRequest request)
+        {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
+            var serviceResponse = new ServiceResponse<object>
+            {
+                Success = true
+            };
+
+            try
+            {
+                var product = await _productRepository.GetByIdAsync(request.Id);
+
+                if (product == null)
+                    throw new ArgumentNullException(nameof(product));
+
+                product.Name = request.Name;
+                product.ShortDescription = request.ShortDescription;
+                product.FullDescription = request.FullDescription;
+                product.AlternativeName = request.AlternativeName;
+                product.Title = request.Title;
+                product.OldPrice = request.OldPrice;
+                product.NewPrice = request.NewPrice;
+                product.Deleted = request.Deleted;
+                product.Published = request.Published;
+
+                await UpdateAsync(product);
+
+                serviceResponse.ResultCode = ResultCode.Success;
+                return serviceResponse;
+            }
+            catch (Exception ex)
+            {
+                _ = _logService.InsertLogAsync(LogLevel.Error, $"ProductService-UpdateAsync Error: model {JsonConvert.SerializeObject(request)}", ex.Message.ToString());
+                serviceResponse.Success = false;
+                serviceResponse.ResultCode = ResultCode.Exception;
+                serviceResponse.Warnings.Add(ex.Message);
+                return serviceResponse;
+            }
+        }
+
+        /// <summary>
+        /// Gets product with queryable
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public virtual IQueryable<ProductEntity> Get(Expression<Func<ProductEntity, bool>> predicate = null)
+        {
+            return _productRepository.Get(predicate);
+        }
         #endregion
     }
 }

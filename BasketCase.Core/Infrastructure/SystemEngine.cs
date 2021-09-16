@@ -1,5 +1,7 @@
-﻿using BasketCase.Core.Configuration;
+﻿using AutoMapper;
+using BasketCase.Core.Configuration;
 using BasketCase.Core.Infrastructure.DependencyManagement;
+using BasketCase.Core.Infrastructure.Mapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -105,6 +107,8 @@ namespace BasketCase.Core.Infrastructure
 
             foreach (var instance in instances)
                 instance.ConfigureServices(services, configuration);
+
+            AddAutoMapper(services, typeFinder);
         }
 
         /// <summary>
@@ -124,6 +128,30 @@ namespace BasketCase.Core.Infrastructure
 
             foreach (var instance in instances)
                 instance.Configure(application);
+        }
+
+        /// <summary>
+        /// Register and configure AutoMapper
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="typeFinder"></param>
+        protected virtual void AddAutoMapper(IServiceCollection services, ITypeFinder typeFinder)
+        {
+            var mapperConfigurations = typeFinder.FindClassesOfType<IOrderedMapperProfile>();
+
+            var instances = mapperConfigurations
+                .Select(mapperConfiguration => (IOrderedMapperProfile)Activator.CreateInstance(mapperConfiguration))
+                .OrderBy(mapperConfiguration => mapperConfiguration.Order);
+
+            var config = new MapperConfiguration(cfg =>
+            {
+                foreach (var instance in instances)
+                {
+                    cfg.AddProfile(instance.GetType());
+                }
+            });
+
+            AutoMapperConfiguration.Init(config);
         }
 
         /// <summary>

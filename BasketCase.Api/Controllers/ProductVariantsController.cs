@@ -55,6 +55,28 @@ namespace BasketCase.Api.Controllers
             return OkResponse(new ResultModel(true, "Product variant has been added!"));
         }
 
+        [HttpPost("update-variant")]
+        [AllowAnonymous]
+        public virtual async Task<IActionResult> UpdateAsync([FromBody] ProductVariantUpdateRequest request)
+        {
+            _ = _logService.InsertLogAsync(LogLevel.Information, $"ProductVariantsController - UpdateAsync Request", JsonConvert.SerializeObject(request));
+
+            var serviceResponse = await _productVariantService.UpdateAsync(request);
+
+            if (serviceResponse.Warnings.Count > 0 || serviceResponse.Warnings.Any())
+            {
+                _ = _logService.InsertLogAsync(LogLevel.Error, $"ProductVariantsController - UpdateAsync Error", JsonConvert.SerializeObject(serviceResponse));
+
+                return BadResponse(new ResultModel
+                {
+                    Status = false,
+                    Message = string.Join(Environment.NewLine, serviceResponse.Warnings.Select(err => string.Join(Environment.NewLine, err)))
+                });
+            }
+
+            return OkResponse(new ResultModel(true, "Product variant has been updated!"));
+        }
+
         [HttpGet("id/{id}")]
         [AllowAnonymous]
         public virtual async Task<IActionResult> GetByIdAsync(string id)

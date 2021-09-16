@@ -1,7 +1,11 @@
 ﻿using BasketCase.Core.Domain.Product;
 using BasketCase.Domain.Common;
 using BasketCase.Domain.Dto.Request.Product;
+using BasketCase.Domain.Dto.Response.Product;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace BasketCase.Business.Interfaces.Product
@@ -24,6 +28,25 @@ namespace BasketCase.Business.Interfaces.Product
         Task CreateAsync(List<ProductVariant> productVariants);
 
         /// <summary>
+        /// Inserts a product variant
+        /// </summary>
+        /// <param name="request"></param>
+        Task<ServiceResponse<object>> CreateAsync(ProductVariantCreateRequest request);
+
+        /// <summary>
+        /// Updates a product variant
+        /// </summary>
+        /// <param name="request"></param>
+        Task<ServiceResponse<object>> UpdateAsync(ProductVariantUpdateRequest request);
+
+       /// <summary>
+       /// Updates a variant
+       /// </summary>
+       /// <param name="productVariant"></param>
+       /// <returns></returns>
+        Task UpdateAsync(ProductVariant productVariant);
+
+        /// <summary>
         /// Deletes a product variant
         /// </summary>
         /// <param name="productVariant"></param>
@@ -42,25 +65,26 @@ namespace BasketCase.Business.Interfaces.Product
         /// </summary>
         /// <param name="variantId"></param>
         /// <returns></returns>
-        Task<ProductVariant> GetByIdAsync(string variantId);
+        Task<ProductVariantDto> GetByIdAsync(string variantId);
 
         /// <summary>
         /// Gets a product variant by id
         /// </summary>
         /// <param name="variantId"></param>
         /// <returns></returns>
-        Task<List<ProductVariant>> GetByProductIdAsync(string productId);
-
-        /// <summary>
-        /// Inserts a product variant
-        /// </summary>
-        /// <param name="request"></param>
-        Task<ServiceResponse<object>> CreateAsync(ProductVariantCreateRequest request);
-
+        Task<List<ProductVariantDto>> GetByProductIdAsync(string productId);
+     
         /// <summary>
         /// Gets product variant lists
         /// </summary>
         /// <returns></returns>
-        Task<List<ProductVariant>> GetListAsync();
+        Task<List<ProductVariantDto>> GetListAsync();
+
+        /// <summary>
+        /// Gets product variant with queryable
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        IQueryable<ProductVariant> Get(Expression<Func<ProductVariant, bool>> predicate = null);
     }
 }

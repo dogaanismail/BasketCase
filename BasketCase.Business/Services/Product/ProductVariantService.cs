@@ -10,6 +10,10 @@ using BasketCase.Business.Interfaces.Logging;
 using BasketCase.Domain.Enumerations;
 using Newtonsoft.Json;
 using MongoDB.Bson;
+using BasketCase.Domain.Dto.Response.Product;
+using BasketCase.Core.Infrastructure.Mapper;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace BasketCase.Business.Services.Product
 {
@@ -131,16 +135,28 @@ namespace BasketCase.Business.Services.Product
         }
 
         /// <summary>
+        /// Gets product variant with queryable
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public IQueryable<ProductVariant> Get(Expression<Func<ProductVariant, bool>> predicate = null)
+        {
+            return _productVariantRepository.Get(predicate);
+        }
+
+        /// <summary>
         /// Gets a product variant by id
         /// </summary>
         /// <param name="variantId"></param>
         /// <returns></returns>
-        public virtual async Task<ProductVariant> GetByIdAsync(string variantId)
+        public virtual async Task<ProductVariantDto> GetByIdAsync(string variantId)
         {
             if (string.IsNullOrEmpty(variantId))
                 throw new ArgumentNullException(nameof(variantId));
 
-            return await _productVariantRepository.GetByIdAsync(variantId);
+            var variant = await _productVariantRepository.GetByIdAsync(variantId);
+
+            return AutoMapperConfiguration.Mapper.Map<ProductVariantDto>(variant);
         }
 
         /// <summary>
@@ -148,21 +164,81 @@ namespace BasketCase.Business.Services.Product
         /// </summary>
         /// <param name="productId"></param>
         /// <returns></returns>
-        public virtual async Task<List<ProductVariant>> GetByProductIdAsync(string productId)
+        public virtual async Task<List<ProductVariantDto>> GetByProductIdAsync(string productId)
         {
             if (string.IsNullOrEmpty(productId))
                 throw new ArgumentNullException(nameof(productId));
 
-            return await _productVariantRepository.GetListAsync(x => x.ProductId == productId);
+            var variantList = await _productVariantRepository.GetListAsync(x => x.ProductId == productId);
+
+            return AutoMapperConfiguration.Mapper.Map<List<ProductVariantDto>>(variantList);
         }
 
         /// <summary>
         /// Gets product variant lists
         /// </summary>
         /// <returns></returns>
-        public virtual async Task<List<ProductVariant>> GetListAsync()
+        public virtual async Task<List<ProductVariantDto>> GetListAsync()
         {
-            return await _productVariantRepository.GetListAsync();
+            var variantList = await _productVariantRepository.GetListAsync();
+
+            return AutoMapperConfiguration.Mapper.Map<List<ProductVariantDto>>(variantList);
+        }
+
+        /// <summary>
+        /// Updates a product variant
+        /// </summary>
+        /// <param name="request"></param>
+        public virtual async Task<ServiceResponse<object>> UpdateAsync(ProductVariantUpdateRequest request)
+        {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
+            var serviceResponse = new ServiceResponse<object>
+            {
+                Success = true
+            };
+
+            try
+            {
+                var productVariant = await _productVariantRepository.GetByIdAsync(request.Id);
+
+                if (productVariant == null)
+                    throw new ArgumentNullException(nameof(productVariant));
+
+                productVariant.ProductId = request.ProductId;
+                productVariant.Sku = request.Sku;
+                productVariant.Barcode = request.Barcode;
+                productVariant.MinStockQuantity = request.MinStockQuantity;
+                productVariant.StockQuantity = request.Quantity;
+                productVariant.UpdatedAt = DateTime.UtcNow;
+
+                await UpdateAsync(productVariant);
+
+                serviceResponse.ResultCode = ResultCode.Success;
+                return serviceResponse;
+            }
+            catch (Exception ex)
+            {
+                _ = _logService.InsertLogAsync(LogLevel.Error, $"ProductVariantService-UpdateAsync Error: model {JsonConvert.SerializeObject(request)}", ex.Message.ToString());
+                serviceResponse.Success = false;
+                serviceResponse.ResultCode = ResultCode.Exception;
+                serviceResponse.Warnings.Add(ex.Message);
+                return serviceResponse;
+            }
+        }
+
+        /// <summary>
+        /// Updates a product
+        /// </summary>
+        /// <param name="productVariant"></param>
+        /// <returns></returns>
+        public virtual async Task UpdateAsync(ProductVariant productVariant)
+        {
+            if (productVariant == null)
+                throw new ArgumentNullException(nameof(productVariant));
+
+            await _productVariantRepository.UpdateAsync(productVariant, x => x.Id == productVariant.Id);
         }
 
         #endregion
