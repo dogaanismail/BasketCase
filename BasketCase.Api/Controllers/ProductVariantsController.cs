@@ -55,7 +55,7 @@ namespace BasketCase.Api.Controllers
             return OkResponse(new ResultModel(true, "Product variant has been added!"));
         }
 
-        [HttpPost("update-variant")]
+        [HttpPut("update-variant")]
         [AllowAnonymous]
         public virtual async Task<IActionResult> UpdateAsync([FromBody] ProductVariantUpdateRequest request)
         {
